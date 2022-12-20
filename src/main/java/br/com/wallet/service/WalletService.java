@@ -43,6 +43,18 @@ public class WalletService {
         return walletDtoList;
     }
 
+    public WalletDto getWalletById(String id) {
+        return repository.findById(id)
+                .map(this::getWalletDTO)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
+    }
+
+    private WalletDto getWalletDTO(Wallet wallet) {
+        WalletDto walletDto = new WalletDto(wallet);
+        log.info("Wallet returned");
+        return walletDto;
+    }
+
     private List<Wallet> getAllWalletsList() {
         return repository.findAll();
     }
