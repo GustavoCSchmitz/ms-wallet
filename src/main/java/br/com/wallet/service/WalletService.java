@@ -49,6 +49,14 @@ public class WalletService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
     }
 
+    public WalletDto getWalletByUserId(String id) {
+        Wallet wallet = repository.findByUserId(id);
+        WalletDto walletDto = new WalletDto(wallet);
+        log.info("Wallet returned");
+
+        return walletDto;
+    }
+
     private WalletDto getWalletDTO(Wallet wallet) {
         WalletDto walletDto = new WalletDto(wallet);
         log.info("Wallet returned");

@@ -51,4 +51,16 @@ public interface WalletApi {
             @Parameter(description = "wallet id")
             @PathVariable String id
     );
+
+    @Operation(summary = "Get a wallet by userId")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ok", content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "400", description = "Bad request", content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "404", description = "Wallet not found", content = @Content(mediaType = "application/json"))
+    })
+    @GetMapping("/user/{id}")
+    WalletDto getWalletByUserId(
+            @Parameter(description = "user id")
+            @PathVariable String id
+    );
 }

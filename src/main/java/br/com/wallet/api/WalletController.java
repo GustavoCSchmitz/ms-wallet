@@ -35,4 +35,10 @@ public class WalletController implements WalletApi {
         log.info("[WALLET - API] Get wallet by id");
         return service.getWalletById(id);
     }
+
+    @Override
+    public WalletDto getWalletByUserId(String id) {
+        log.info("[WALLET - API] Get wallet by user id");
+        return service.getWalletByUserId(id);
+    }
 }
