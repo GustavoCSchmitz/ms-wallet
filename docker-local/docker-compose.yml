@@ -1,0 +1,34 @@
+version: "3.7"
+services:
+  wallet.db:
+    container_name: wallet.db
+    restart: "no"
+    image: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - data:/data/db
+    networks:
+      - wallet-network
+
+  wallet.api:
+    container_name: wallet.api
+    ports:
+      - "8080:8080"
+    restart: "no"
+    build:
+      context: ../
+      dockerfile:  Dockerfile
+    networks:
+      - wallet-network
+    env_file:
+      - ../.env
+    depends_on:
+      - wallet.db
+
+volumes:
+  data: {}
+
+networks:
+  wallet-network:
+    driver: bridge
