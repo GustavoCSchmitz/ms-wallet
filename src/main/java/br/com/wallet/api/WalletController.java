@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -19,7 +20,13 @@ public class WalletController implements WalletApi {
 
     @Override
     public WalletDto createUser(@Valid WalletForm walletForm) {
-        log.info("[USER - API] Creating user");
+        log.info("[WALLET - API] Creating user");
         return service.createWallet(walletForm);
+    }
+
+    @Override
+    public List<WalletDto> getAllWallets() {
+        log.info("[WALLET - API] List wallets");
+        return service.getAllWallets();
     }
 }

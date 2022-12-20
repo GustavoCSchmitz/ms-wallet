@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -32,6 +33,18 @@ public class WalletService {
             log.error("Cannot create wallet");
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
+    }
+
+    public List<WalletDto> getAllWallets() {
+        List<Wallet> wallets = getAllWalletsList();
+        List<WalletDto> walletDtoList = WalletDto.convert(wallets);
+        log.info("Wallet list returned");
+
+        return walletDtoList;
+    }
+
+    private List<Wallet> getAllWalletsList() {
+        return repository.findAll();
     }
 
     private Wallet saveWallet(Wallet wallet) {

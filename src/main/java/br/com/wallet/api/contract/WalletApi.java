@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.GetMapping;
+
+import java.util.List;
 
 @RequestMapping("/wallets")
 public interface WalletApi {
@@ -26,4 +29,12 @@ public interface WalletApi {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     WalletDto createUser(@RequestBody WalletForm walletForm);
+
+    @Operation(summary = "List all wallets")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ok", content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "Service error", content = @Content(mediaType = "application/json"))
+    })
+    @GetMapping
+    List<WalletDto> getAllWallets();
 }
