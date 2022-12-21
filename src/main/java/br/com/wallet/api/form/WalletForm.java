@@ -2,6 +2,7 @@ package br.com.wallet.api.form;
 
 import br.com.wallet.model.Wallet;
 import br.com.wallet.model.enums.Status;
+import br.com.wallet.util.DateUtils;
 
 import javax.validation.constraints.NotBlank;
 
@@ -14,6 +15,7 @@ public record WalletForm(
                 .userId(form.userId())
                 .accountBalance(0.0)
                 .status(Status.ACTIVE)
+                .creationDate(DateUtils.getCurrentDate())
                 .build();
     }
 }
