@@ -7,6 +7,7 @@ import br.com.wallet.dto.WalletDto;
 import br.com.wallet.service.WalletService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
@@ -47,5 +48,11 @@ public class WalletController implements WalletApi {
     public WalletDto updateWallet(String id, @Valid WalletFormPut walletFormPut) {
         log.info("[WALLET - API] Updating wallet");
         return service.updateWallet(id, walletFormPut);
+    }
+
+    @Override
+    public ResponseEntity deleteWallet(String id) {
+        log.info("[WALLET - API] Deleting wallet");
+        return service.deleteWallet(id);
     }
 }

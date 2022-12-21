@@ -10,6 +10,7 @@ import br.com.wallet.repository.WalletRepository;
 import br.com.wallet.util.CopyPropertiesUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -105,5 +106,16 @@ public class WalletService {
     private NotFoundException handleNotFoundException() {
         log.error(WALLET_NOT_FOUND_MESSAGE);
         return new NotFoundException(WALLET_NOT_FOUND_MESSAGE);
+    }
+
+    public ResponseEntity deleteWallet(String id) {
+        try {
+            repository.deleteById(id);
+            log.info("Wallet deleted successfully");
+            return ResponseEntity.noContent().build();
+        }catch (Exception e){
+            log.error("Cannot delete wallet");
+            throw new WalletException(e.getMessage());
+        }
     }
 }
