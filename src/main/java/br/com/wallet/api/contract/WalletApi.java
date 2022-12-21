@@ -1,6 +1,7 @@
 package br.com.wallet.api.contract;
 
 import br.com.wallet.api.form.WalletForm;
+import br.com.wallet.api.form.WalletFormPut;
 import br.com.wallet.dto.WalletDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
 
 import java.util.List;
 
@@ -62,5 +64,20 @@ public interface WalletApi {
     WalletDto getWalletByUserId(
             @Parameter(description = "user id")
             @PathVariable String id
+    );
+
+    @Operation(summary = "Update a wallet")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ok", content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "400", description = "Bad request", content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "404", description = "Wallet not found", content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "422", description = "Unprocessable entity", content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "412", description = "Precondition failed", content = @Content(mediaType = "application/json"))
+    })
+    @PutMapping("/{id}")
+    WalletDto updateWallet(
+            @Parameter(description = "wallet id")
+            @PathVariable String id,
+            @RequestBody WalletFormPut walletFormPut
     );
 }

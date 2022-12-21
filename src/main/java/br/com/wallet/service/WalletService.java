@@ -1,9 +1,11 @@
 package br.com.wallet.service;
 
 import br.com.wallet.api.form.WalletForm;
+import br.com.wallet.api.form.WalletFormPut;
 import br.com.wallet.dto.WalletDto;
 import br.com.wallet.model.Wallet;
 import br.com.wallet.repository.WalletRepository;
+import br.com.wallet.util.CopyPropertiesUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -55,6 +57,33 @@ public class WalletService {
         log.info("Wallet returned");
 
         return walletDto;
+    }
+
+    @Transactional
+    public WalletDto updateWallet(String id, WalletFormPut walletFormPut) {
+        Wallet wallet = findWalletById(id);
+        Wallet updatedWallet = updateWallet(walletFormPut, wallet);
+
+        WalletDto walletDto = new WalletDto(updatedWallet);
+        log.info("Wallet updated successfully");
+
+        return walletDto;
+    }
+
+    private Wallet updateWallet(WalletFormPut walletFormPut, Wallet wallet) {
+        try{
+            Wallet updatedWallet = walletFormPut.toWallet();
+            CopyPropertiesUtils.copyFieldsNotNull(wallet,updatedWallet);
+            return saveWallet(wallet);
+        }catch (Exception e){
+            log.error("Cannot update wallet");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    private Wallet findWalletById(String id) {
+        return repository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
     private WalletDto getWalletDTO(Wallet wallet) {

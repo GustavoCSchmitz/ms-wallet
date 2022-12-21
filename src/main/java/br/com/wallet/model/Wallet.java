@@ -21,4 +21,7 @@ public class Wallet {
     private double accountBalance;
     private Status status;
 
+    public Wallet(Status status) {
+        this.status = status;
+    }
 }

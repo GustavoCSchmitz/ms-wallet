@@ -2,6 +2,7 @@ package br.com.wallet.api;
 
 import br.com.wallet.api.contract.WalletApi;
 import br.com.wallet.api.form.WalletForm;
+import br.com.wallet.api.form.WalletFormPut;
 import br.com.wallet.dto.WalletDto;
 import br.com.wallet.service.WalletService;
 import lombok.RequiredArgsConstructor;
@@ -40,5 +41,11 @@ public class WalletController implements WalletApi {
     public WalletDto getWalletByUserId(String id) {
         log.info("[WALLET - API] Get wallet by user id");
         return service.getWalletByUserId(id);
+    }
+
+    @Override
+    public WalletDto updateWallet(String id, @Valid WalletFormPut walletFormPut) {
+        log.info("[WALLET - API] Updating wallet");
+        return service.updateWallet(id, walletFormPut);
     }
 }
