@@ -3,15 +3,15 @@ package br.com.wallet.service;
 import br.com.wallet.api.form.WalletForm;
 import br.com.wallet.api.form.WalletFormPut;
 import br.com.wallet.dto.WalletDto;
+import br.com.wallet.exceptions.NotFoundException;
+import br.com.wallet.exceptions.WalletException;
 import br.com.wallet.model.Wallet;
 import br.com.wallet.repository.WalletRepository;
 import br.com.wallet.util.CopyPropertiesUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -20,6 +20,8 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class WalletService {
+
+    private static final String WALLET_NOT_FOUND_MESSAGE = "Wallet not found";
 
     private final WalletRepository repository;
 
@@ -33,7 +35,7 @@ public class WalletService {
             return walletDto;
         }catch (Exception e){
             log.error("Cannot create wallet");
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+            throw new WalletException(e.getMessage());
         }
     }
 
@@ -48,7 +50,7 @@ public class WalletService {
     public WalletDto getWalletById(String id) {
         return repository.findById(id)
                 .map(this::getWalletDTO)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
+                .orElseThrow(this::handleNotFoundException);
     }
 
     public WalletDto getWalletByUserId(String id) {
@@ -77,13 +79,13 @@ public class WalletService {
             return saveWallet(wallet);
         }catch (Exception e){
             log.error("Cannot update wallet");
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+            throw new WalletException(e.getMessage());
         }
     }
 
     private Wallet findWalletById(String id) {
         return repository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+                .orElseThrow(this::handleNotFoundException);
     }
 
     private WalletDto getWalletDTO(Wallet wallet) {
@@ -98,5 +100,10 @@ public class WalletService {
 
     private Wallet saveWallet(Wallet wallet) {
         return repository.save(wallet);
+    }
+
+    private NotFoundException handleNotFoundException() {
+        log.error(WALLET_NOT_FOUND_MESSAGE);
+        return new NotFoundException(WALLET_NOT_FOUND_MESSAGE);
     }
 }
