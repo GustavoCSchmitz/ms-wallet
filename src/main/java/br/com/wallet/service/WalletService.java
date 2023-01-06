@@ -24,6 +24,8 @@ public class WalletService {
 
     private static final String WALLET_NOT_FOUND_MESSAGE = "Wallet not found";
 
+    private final UserService userService;
+
     private final WalletRepository repository;
 
     @Transactional
