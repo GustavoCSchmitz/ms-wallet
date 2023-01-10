@@ -1,8 +1,10 @@
 package br.com.wallet.api.contract;
 
+import br.com.wallet.api.form.DepositForm;
 import br.com.wallet.api.form.WalletForm;
 import br.com.wallet.api.form.WalletFormPut;
 import br.com.wallet.dto.WalletDto;
+import br.com.wallet.dto.WalletResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -95,4 +97,16 @@ public interface WalletApi {
             @Parameter(description = "wallet id")
             @PathVariable String id
     );
+
+    @Operation(summary = "Insert a deposit in wallet")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Ok", content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "412", description = "Precondition failed", content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "422", description = "Unprocessable entity", content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "Service error", content = @Content(mediaType = "application/json"))
+    })
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping("/deposit")
+    WalletResponseDto deposit(@RequestBody DepositForm depositForm);
 }

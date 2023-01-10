@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
@@ -21,13 +22,19 @@ public class Wallet {
     @Id
     private String id;
     private String userId;
-    private double accountBalance;
+    private BigDecimal accountBalance;
     private Status status;
     private LocalDateTime creationDate;
     private LocalDateTime updatingDate;
 
     public Wallet(Status status) {
         this.status = status;
+        this.updatingDate = DateUtils.getCurrentDate();
+    }
+
+    public Wallet(String id, BigDecimal accountBalance) {
+        this.id = id;
+        this.accountBalance = accountBalance;
         this.updatingDate = DateUtils.getCurrentDate();
     }
 }

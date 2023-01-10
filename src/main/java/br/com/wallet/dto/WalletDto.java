@@ -4,13 +4,14 @@ import br.com.wallet.model.Wallet;
 import br.com.wallet.model.enums.Status;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
 public record WalletDto(
         String id,
         String userId,
-        double accountBalance,
+        BigDecimal accountBalance,
         Status status,
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy'T'HH:mm:ss")
         LocalDateTime creationDate,

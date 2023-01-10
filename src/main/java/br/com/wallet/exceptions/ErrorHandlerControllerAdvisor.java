@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@ControllerAdvice(basePackages = "br.com.user")
+@ControllerAdvice(basePackages = "br.com.wallet")
 public class ErrorHandlerControllerAdvisor {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

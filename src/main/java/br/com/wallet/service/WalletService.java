@@ -1,11 +1,14 @@
 package br.com.wallet.service;
 
+import br.com.wallet.api.form.DepositForm;
 import br.com.wallet.api.form.WalletForm;
 import br.com.wallet.api.form.WalletFormPut;
 import br.com.wallet.dto.WalletDto;
+import br.com.wallet.dto.WalletResponseDto;
 import br.com.wallet.exceptions.NotFoundException;
 import br.com.wallet.exceptions.WalletException;
 import br.com.wallet.model.Wallet;
+import br.com.wallet.model.enums.Status;
 import br.com.wallet.repository.WalletRepository;
 import br.com.wallet.util.CopyPropertiesUtils;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +18,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.Valid;
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @Service
@@ -120,4 +125,22 @@ public class WalletService {
             throw new WalletException(e.getMessage());
         }
     }
+
+    public WalletResponseDto deposit(DepositForm depositForm) {
+        Wallet wallet = findWalletById(depositForm.walletId());
+        if(Objects.equals(wallet.getStatus(), Status.ACTIVE)){
+            BigDecimal newAccountBalance = calculateAccountBalance(depositForm.value(), wallet.getAccountBalance());
+            Wallet updatedWallet = new Wallet(depositForm.walletId(), newAccountBalance);
+            CopyPropertiesUtils.copyFieldsNotNull(wallet,updatedWallet);
+            saveWallet(wallet);
+            log.info("Deposit made successfully");
+            return new WalletResponseDto(wallet.getId(), newAccountBalance);
+        }
+        return null;
+    }
+
+    private BigDecimal calculateAccountBalance(BigDecimal value, BigDecimal accountBalance) {
+        return value.add(accountBalance);
+    }
+
 }

@@ -5,6 +5,7 @@ import br.com.wallet.model.enums.Status;
 import br.com.wallet.util.DateUtils;
 
 import javax.validation.constraints.NotBlank;
+import java.math.BigDecimal;
 
 public record WalletForm(
         @NotBlank(message = "'userID' must not be blank")
@@ -13,7 +14,7 @@ public record WalletForm(
     public Wallet toWallet(WalletForm form) {
         return Wallet.builder()
                 .userId(form.userId())
-                .accountBalance(0.0)
+                .accountBalance(BigDecimal.ZERO)
                 .status(Status.ACTIVE)
                 .creationDate(DateUtils.getCurrentDate())
                 .build();

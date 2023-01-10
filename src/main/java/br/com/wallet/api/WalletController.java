@@ -1,9 +1,11 @@
 package br.com.wallet.api;
 
 import br.com.wallet.api.contract.WalletApi;
+import br.com.wallet.api.form.DepositForm;
 import br.com.wallet.api.form.WalletForm;
 import br.com.wallet.api.form.WalletFormPut;
 import br.com.wallet.dto.WalletDto;
+import br.com.wallet.dto.WalletResponseDto;
 import br.com.wallet.service.WalletService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -54,5 +56,10 @@ public class WalletController implements WalletApi {
     public ResponseEntity deleteWallet(String id) {
         log.info("[WALLET - API] Deleting wallet");
         return service.deleteWallet(id);
+    }
+
+    @Override
+    public WalletResponseDto deposit(@Valid DepositForm depositForm) {
+        return service.deposit(depositForm);
     }
 }
