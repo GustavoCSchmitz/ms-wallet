@@ -3,6 +3,7 @@ package br.com.wallet.service;
 import br.com.wallet.api.form.DepositForm;
 import br.com.wallet.api.form.WalletForm;
 import br.com.wallet.api.form.WalletFormPut;
+import br.com.wallet.dto.UserResponseDto;
 import br.com.wallet.dto.WalletDto;
 import br.com.wallet.dto.WalletResponseDto;
 import br.com.wallet.exceptions.NotFoundException;
@@ -21,6 +22,8 @@ import javax.validation.Valid;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
+
+import static java.util.Objects.nonNull;
 
 @Slf4j
 @Service
@@ -128,7 +131,8 @@ public class WalletService {
 
     public WalletResponseDto deposit(DepositForm depositForm) {
         Wallet wallet = findWalletById(depositForm.walletId());
-        if(Objects.equals(wallet.getStatus(), Status.ACTIVE)){
+        UserResponseDto user = userService.getUser(depositForm.senderUserId());
+        if(isValidOperation(wallet, user)){
             BigDecimal newAccountBalance = calculateAccountBalance(depositForm.value(), wallet.getAccountBalance());
             Wallet updatedWallet = new Wallet(depositForm.walletId(), newAccountBalance);
             CopyPropertiesUtils.copyFieldsNotNull(wallet,updatedWallet);
@@ -137,6 +141,11 @@ public class WalletService {
             return new WalletResponseDto(wallet.getId(), newAccountBalance);
         }
         return null;
+    }
+
+    private boolean isValidOperation(Wallet wallet, UserResponseDto user) {
+        return Objects.equals(wallet.getStatus(), Status.ACTIVE)
+                && nonNull(user) && Objects.equals(user.status(), Status.ACTIVE);
     }
 
     private BigDecimal calculateAccountBalance(BigDecimal value, BigDecimal accountBalance) {
