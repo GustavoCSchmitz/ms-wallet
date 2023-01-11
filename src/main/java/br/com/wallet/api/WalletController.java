@@ -4,6 +4,7 @@ import br.com.wallet.api.contract.WalletApi;
 import br.com.wallet.api.form.DepositForm;
 import br.com.wallet.api.form.WalletForm;
 import br.com.wallet.api.form.WalletFormPut;
+import br.com.wallet.api.form.WithdrawForm;
 import br.com.wallet.dto.WalletDto;
 import br.com.wallet.dto.WalletResponseDto;
 import br.com.wallet.service.WalletService;
@@ -61,5 +62,10 @@ public class WalletController implements WalletApi {
     @Override
     public WalletResponseDto deposit(@Valid DepositForm depositForm) {
         return service.deposit(depositForm);
+    }
+
+    @Override
+    public WalletResponseDto withdraw(@Valid WithdrawForm withdrawForm) {
+        return service.withdraw(withdrawForm);
     }
 }

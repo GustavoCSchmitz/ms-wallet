@@ -3,6 +3,7 @@ package br.com.wallet.service;
 import br.com.wallet.api.form.DepositForm;
 import br.com.wallet.api.form.WalletForm;
 import br.com.wallet.api.form.WalletFormPut;
+import br.com.wallet.api.form.WithdrawForm;
 import br.com.wallet.dto.UserResponseDto;
 import br.com.wallet.dto.WalletDto;
 import br.com.wallet.dto.WalletResponseDto;
@@ -134,9 +135,9 @@ public class WalletService {
 
     public WalletResponseDto deposit(DepositForm depositForm) {
         Wallet wallet = findWalletById(depositForm.walletId());
-        UserResponseDto user = userService.getUser(depositForm.senderUserId());
+        UserResponseDto user = userService.getUser(depositForm.receiverUserId());
         if(isValidOperation(wallet, user)){
-            BigDecimal newAccountBalance = calculateAccountBalance(depositForm.value(), wallet.getAccountBalance());
+            BigDecimal newAccountBalance = calculateAccountBalance(depositForm.value(), wallet.getAccountBalance(), OperationType.DEPOSIT);
             Wallet updatedWallet = new Wallet(depositForm.walletId(), newAccountBalance);
             CopyPropertiesUtils.copyFieldsNotNull(wallet,updatedWallet);
             Wallet savedWallet = saveWallet(wallet);
@@ -147,13 +148,33 @@ public class WalletService {
         return null;
     }
 
-    private boolean isValidOperation(Wallet wallet, UserResponseDto user) {
-        return Objects.equals(wallet.getStatus(), Status.ACTIVE)
-                && nonNull(user) && Objects.equals(user.status(), Status.ACTIVE);
+    public WalletResponseDto withdraw(WithdrawForm withdrawForm) {
+        Wallet wallet = findWalletById(withdrawForm.walletId());
+        UserResponseDto user = userService.getUser(withdrawForm.receiverUserId());
+        if(isValidOperation(wallet, user)){
+            BigDecimal newAccountBalance = calculateAccountBalance(withdrawForm.value(), wallet.getAccountBalance(), OperationType.WITHDRAW);
+            Wallet updatedWallet = new Wallet(withdrawForm.walletId(), newAccountBalance);
+            CopyPropertiesUtils.copyFieldsNotNull(wallet,updatedWallet);
+            Wallet savedWallet = saveWallet(wallet);
+            movementHistoryService.saveMovementHistory(savedWallet.getId(), withdrawForm.value(), OperationType.WITHDRAW);
+            log.info("Withdraw made successfully");
+            return new WalletResponseDto(savedWallet.getId(), newAccountBalance);
+        }
+        return null;
     }
 
-    private BigDecimal calculateAccountBalance(BigDecimal value, BigDecimal accountBalance) {
-        return value.add(accountBalance);
+    private boolean isValidOperation(Wallet wallet, UserResponseDto user) {
+        return Objects.equals(wallet.getStatus(), Status.ACTIVE)
+                && nonNull(user) && Objects.equals(user.id(), wallet.getUserId())
+                && Objects.equals(user.status(), Status.ACTIVE);
+    }
+
+    private BigDecimal calculateAccountBalance(BigDecimal value, BigDecimal accountBalance, OperationType operation) {
+        return switch (operation){
+            case DEPOSIT -> value.add(accountBalance);
+            case WITHDRAW -> accountBalance.subtract(value);
+            case TRANSFER -> null;
+        };
     }
 
 }
