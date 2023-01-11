@@ -11,6 +11,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @Builder
@@ -26,6 +27,7 @@ public class Wallet {
     private Status status;
     private LocalDateTime creationDate;
     private LocalDateTime updatingDate;
+    private List<MovementHistory> extract;
 
     public Wallet(Status status) {
         this.status = status;

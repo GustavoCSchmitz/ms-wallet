@@ -16,7 +16,8 @@ public record WalletDto(
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy'T'HH:mm:ss")
         LocalDateTime creationDate,
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy'T'HH:mm:ss")
-        LocalDateTime updatingDate
+        LocalDateTime updatingDate,
+        List<MovementHistoryDto> extract
 ) {
     public WalletDto(Wallet wallet) {
         this(
@@ -25,7 +26,8 @@ public record WalletDto(
                 wallet.getAccountBalance(),
                 wallet.getStatus(),
                 wallet.getCreationDate(),
-                wallet.getUpdatingDate()
+                wallet.getUpdatingDate(),
+                MovementHistoryDto.convert(wallet.getExtract())
         );
     }
 

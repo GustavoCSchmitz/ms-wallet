@@ -9,6 +9,7 @@ import br.com.wallet.dto.WalletResponseDto;
 import br.com.wallet.exceptions.NotFoundException;
 import br.com.wallet.exceptions.WalletException;
 import br.com.wallet.model.Wallet;
+import br.com.wallet.model.enums.OperationType;
 import br.com.wallet.model.enums.Status;
 import br.com.wallet.repository.WalletRepository;
 import br.com.wallet.util.CopyPropertiesUtils;
@@ -33,6 +34,8 @@ public class WalletService {
     private static final String WALLET_NOT_FOUND_MESSAGE = "Wallet not found";
 
     private final UserService userService;
+
+    private final MovementHistoryService movementHistoryService;
 
     private final WalletRepository repository;
 
@@ -136,9 +139,10 @@ public class WalletService {
             BigDecimal newAccountBalance = calculateAccountBalance(depositForm.value(), wallet.getAccountBalance());
             Wallet updatedWallet = new Wallet(depositForm.walletId(), newAccountBalance);
             CopyPropertiesUtils.copyFieldsNotNull(wallet,updatedWallet);
-            saveWallet(wallet);
+            Wallet savedWallet = saveWallet(wallet);
+            movementHistoryService.saveMovementHistory(savedWallet.getId(), depositForm.value(), OperationType.DEPOSIT);
             log.info("Deposit made successfully");
-            return new WalletResponseDto(wallet.getId(), newAccountBalance);
+            return new WalletResponseDto(savedWallet.getId(), newAccountBalance);
         }
         return null;
     }
